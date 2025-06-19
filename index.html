@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Interactive Graph - With Node Colors (Hover Only)</title>
+  <title>Interactive Graph - Hover Labels Only</title>
   <style>
     html, body {
       margin: 0;
@@ -25,12 +25,30 @@
     sigma.parsers.gexf('graph.gexf', {
       container: 'container',
       settings: {
-        defaultNodeColor: '#999',
-        defaultEdgeColor: '#ccc',
-        labelThreshold: 9999,  // מציג תוויות רק ב-hover
+        labelThreshold: 9999,
         drawEdges: true,
-        enableHovering: true
+        enableHovering: true,
+        sideMargin: 1
       }
+    }, function(s) {
+      // שומרים את השם המקורי של כל צומת
+      s.graph.nodes().forEach(function(n) {
+        n.originalLabel = n.label;
+        n.label = '';
+      });
+      s.refresh();
+
+      // הצגת שם הצומת בעת ריחוף
+      s.bind('overNode', function(e) {
+        e.data.node.label = e.data.node.originalLabel;
+        s.refresh();
+      });
+
+      // הסתרת השם לאחר ריחוף
+      s.bind('outNode', function(e) {
+        e.data.node.label = '';
+        s.refresh();
+      });
     });
   </script>
 </body>
